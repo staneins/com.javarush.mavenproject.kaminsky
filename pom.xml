@@ -34,12 +34,18 @@
             <groupId>com.javarush</groupId>
             <artifactId>desktop-game-engine</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/desktop-game-engine.jar</systemPath>
         </dependency>
     </dependencies>
 
     <build>
+
+        <resources>
+            <resource>
+                <directory>${project.build.directory}/resources</directory>
+                <targetPath>lib/</targetPath>
+            </resource>
+        </resources>
+
         <plugins>
             <!-- Usual compilation -->
             <plugin>
@@ -64,41 +70,18 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>3.1.1</version>
-                <configuration>
-                    <groupId>com.javarush</groupId>
-                    <artifactId>desktop-game-engine</artifactId>
-                    <version>1.0</version>
-                    <file>${basedir}/lib/desktop-game-engine.jar</file>
-                    <packaging>jar</packaging>
-                    <generatePom>false</generatePom>
-                    <pomFile>../com.javarush.mavenproject.kaminsky/pom.xml</pomFile>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>inst_sql</id>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                        <phase>install</phase>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
                     <outputDirectory>
-                        ${project.build.directory}/lib/
+                        ${project.build.directory}/resources/
                     </outputDirectory>
+                    <includeScope>compile</includeScope>
                 </configuration>
                 <executions>
                     <execution>
                         <id>copy-dependencies</id>
-                        <phase>package</phase>
+                        <phase>generate-resources</phase>
                         <goals>
                             <goal>copy-dependencies</goal>
                         </goals>
@@ -114,10 +97,13 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <classpathPrefix>resources/</classpathPrefix>
                             <mainClass>org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader</mainClass>
-                            <rsrcMainClass>com.javarush.games.racer.RacerGame</rsrcMainClass>
+                            <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
+                        <manifestEntries>
+                            <Rsrc-Main-Class>com.javarush.games.racer.RacerGame</Rsrc-Main-Class>
+                            <Class-Path>./</Class-Path>
+                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
